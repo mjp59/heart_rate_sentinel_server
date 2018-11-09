@@ -11,8 +11,7 @@ app = Flask(__name__)
 
 connect("mongodb://localhost:27017/example")
 
-
-class User:
+class User(MongoModel):
     patient_id = fields.IntegerField(primary_key=True)
     attending_email = fields.EmailField
     age = fields.IntegerField()
@@ -71,7 +70,7 @@ def heart_rate_average(patient_id):
 
 @app.route("/api/new_patient", methods=['POST'])
 def new_patient():
-    try:
+    ##try:
         r = request.get_json()
         s1 = int(r.get("patient_id"))
         s2 = r.get("attending_email")
@@ -85,8 +84,8 @@ def new_patient():
             return jsonify({"user": u})
 
         return jsonify({"message": "Error occurred, check your inputs"}), 500
-    except:
-        return jsonify({"message": "Error occurred, check your inputs"}), 500
+    ##except:
+      ##  return jsonify({"message": "Error occurred, check your inputs"}), 500
 
 
 @app.route("/api/heart_rate", methods=['POST'])
