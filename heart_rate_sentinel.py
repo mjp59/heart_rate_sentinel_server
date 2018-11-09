@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from pymodm import connect
 from pymodm import MongoModel, fields
 from validate_email import validate_email
+import datetime
 from datetime import datetime
 
 
@@ -11,7 +12,7 @@ app = Flask(__name__)
 connect("mongodb://localhost:27017/example")
 
 
-class User(MongoModel):
+class User:
     patient_id = fields.IntegerField(primary_key=True)
     attending_email = fields.EmailField
     age = fields.IntegerField()
@@ -107,6 +108,41 @@ def add_heart_rate():
         return jsonify({"message": "Error occurred, check your inputs"}), 500
     except:
         return jsonify({"message": "Error occurred, check your inputs"}), 500
+
+
+@app.route("/api/heart_rate/interval_average", methods=['POST'])
+def interval_average():
+    try:
+        r = request.get_json()
+        s1 = r.get("patient_id")
+        s1_int = int(s1)
+        s2 = r.get("heart_rate")
+
+        date_time_obj = datetime.datetime.strptime(s2, '%Y-%m-%d %H:%M:%S.%f')
+        print('Date:', date_time_obj.date())
+        print('Time:', date_time_obj.time())
+        print('Date-time:', date_time_obj)
+        check1 = isinstance(s1_int, int)
+        if check1:
+            user = User.objects.raw({"_id": s1}).first()
+            times = user.timestamps
+            index = 0
+            for x in range(len(times)):
+                if times[x].date() >= date_time_obj.date():
+                    index = x
+                    break
+            heartrates = user.heart_rate
+            sum = 0
+            for i in range(index+1):
+                sum = sum + heartrates[i]
+            average = sum/(index+1)
+            return jsonify({"average": average,
+                            "Time:": date_time_obj})
+
+        return jsonify({"message": "Error occurred, check your inputs"}), 500
+    except:
+        return jsonify({"message": "Error occurred, check your inputs"}), 500
+
 
 
 if __name__ == "__main__":
