@@ -21,11 +21,13 @@ def main():
     })
     print(r3.text)
 
-    r = requests.post("http://0.0.0.0:5000/api/heart_rate/interval_average", json={
-        "patient_id": "1",
-        "heart_rate_average_since": "2018-11-10 13:00:36.372339",
-    })
+    r = requests.post(
+        "http://0.0.0.0:5000/api/heart_rate/interval_average", json={
+            "patient_id": "1",
+            "heart_rate_average_since": "2018-11-10 13:00:36.372339",
+        })
     print(r.text)
+
 
 if __name__ == "__main__":
     main()

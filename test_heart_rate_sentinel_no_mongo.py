@@ -51,10 +51,12 @@ def test_new_patient():
 
 
 def test_heart_rate_interval_average():
-    resp = requests.post("http://0.0.0.0:5000/api/heart_rate/interval_average", json={
-        "patient_id": "1",
-        "heart_rate_average_since": "2018-11-10 13:00:36.372339",
-    })
+    resp = requests.post(
+        "http://0.0.0.0:5000/api/heart_rate/interval_average", json={
+                            "patient_id": "1",
+                            "heart_rate_average_since":
+                            "2018-11-10 13:00:36.372339",
+        })
     print(resp.text)
     assert resp.status_code == 200
 

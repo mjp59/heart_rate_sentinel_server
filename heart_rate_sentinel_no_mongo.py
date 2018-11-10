@@ -6,7 +6,6 @@ import smtplib
 from email.mime.text import MIMEText
 
 
-
 app = Flask(__name__)
 users = [{
 
@@ -15,16 +14,19 @@ users = [{
              "attending_email": "mike@gmail.com",
              "age": 50,
              "heart_rate": [60, 100, 102],
-             "timestamps": [datetime.now(), datetime.now(), "2018-11-10 14:59:25.974534"],
+             "timestamps": [datetime.now(), datetime.now(),
+                            "2018-11-10 14:59:25.974534"],
              "tach": True,
-},{
+}, {
              "patient_id": "2",
              "attending_email": "tom@gmail.com",
              "age": 50,
              "heart_rate": [60, 100, 99],
-             "timestamps": [datetime.now(), datetime.now(), "2018-11-10 14:59:25.974534"],
+             "timestamps": [datetime.now(), datetime.now(),
+                            "2018-11-10 14:59:25.974534"],
              "tach": False,
 }] * 100
+
 
 @app.route("/api/status/<patient_id>", methods=["GET"])
 def tachycardic(patient_id):
@@ -42,11 +44,11 @@ def tachycardic(patient_id):
     time = timestamps[len(timestamps)-1]
     if user.get("tach"):
         string = "Patient" + str(id) + " is tachycardic as of " + str(time)
-        #me = "mpostiglione17@gmail.com"
-        #you = str(user.get("attending_email"))
-        #s = smtplib.SMTP("0.0.0.0", 5000)
-        #s.sendmail(me, [you], string)
-        #s.quit()
+        # me = "mpostiglione17@gmail.com"
+        # you = str(user.get("attending_email"))
+        # s = smtplib.SMTP("0.0.0.0", 5000)
+        # s.sendmail(me, [you], string)
+        # s.quit()
     else:
         string = "Patient" + str(id) + " is not tachycardic as of " + str(time)
     print(string)
@@ -60,7 +62,8 @@ def heart_rate(patient_id):
 
    parameter: patient id- int, patient who's records we are examining
 
-   return: list gives a list that contains all heart rate measurments for a patient
+   return: list gives a list that contains all heart
+   rate measurments for a patient
     """
     patient_id_int = int(patient_id)
     user = users[patient_id_int]
@@ -74,7 +77,8 @@ def heart_rate_average(patient_id):
 
    parameter: patient id- int, patient who's records we are examining
 
-   return: list gives a list that contains all heart rate measurments for a patient
+   return: list gives a list that contains all heart rate
+   measurments for a patient
     """
     patient_id_int = int(patient_id)
     user = users[patient_id_int]
@@ -85,7 +89,7 @@ def heart_rate_average(patient_id):
 
 @app.route("/api/new_patient", methods=['POST'])
 def new_patient():
-    ##try:
+    # try:
         r = request.get_json()
         s1 = r.get("patient_id")
         s2 = r.get("attending_email")
@@ -100,19 +104,19 @@ def new_patient():
              "heart_rate": [],
              "timestamps": [],
              "tach": False,
-}
+        }
         if check1 and check2 and check3:
             users[int(s1)] = u
             return jsonify(u)
 
         return jsonify({"message": "Error occurred, check your inputs"}), 500
-    ##except:
-      ##  return jsonify({"message": "Error occurred, check your inputs"}), 500
+    # except:
+        # return jsonify({"message": "Error occurred, check your inputs"}), 500
 
 
 @app.route("/api/heart_rate", methods=['POST'])
 def add_heart_rate():
-    try:
+    # try:
         r = request.get_json()
         s1 = r.get("patient_id")
         s1_int = int(s1)
@@ -130,25 +134,35 @@ def add_heart_rate():
             user["timestamps"] = user_timestamps
             if s2_float > 159 and (float(user.get("age"))*365) <= 2:
                 user["tach"] = True
-            elif s2_float > 166 and (float(user.get("age"))*365) > 2 and (float(user.get("age"))*365) <= 6:
+            elif s2_float > 166 and (float(user.get("age"))*365) > 2 \
+                    and (float(user.get("age"))*365) <= 6:
                 user["tach"] = True
-            elif s2_float > 182 and (float(user.get("age"))*365) > 6 and (float(user.get("age"))*365) <= 21:
+            elif s2_float > 182 and (float(user.get("age"))*365) > 6 \
+                    and (float(user.get("age"))*365) <= 21:
                 user["tach"] = True
-            elif s2_float > 179 and (float(user.get("age"))*365) > 21 and (float(user.get("age"))*365) <= 62:
+            elif s2_float > 179 and (float(user.get("age"))*365) > 21 \
+                    and (float(user.get("age"))*365) <= 62:
                 user["tach"] = True
-            elif s2_float > 186 and (float(user.get("age"))*365) > 62 and (float(user.get("age"))*365) <= 155:
+            elif s2_float > 186 and (float(user.get("age"))*365) > 62 \
+                    and (float(user.get("age"))*365) <= 155:
                 user["tach"] = True
-            elif s2_float > 169 and (float(user.get("age"))*365) > 155 and (float(user.get("age"))*365) <= 341:
+            elif s2_float > 169 and (float(user.get("age"))*365) > 155 \
+                    and (float(user.get("age"))*365) <= 341:
                 user["tach"] = True
-            elif s2_float > 151 and float(user.get("age")) >= 1 and float(user.get("age")) <= 2:
+            elif s2_float > 151 and float(user.get("age")) >= 1 \
+                    and float(user.get("age")) <= 2:
                 user["tach"] = True
-            elif s2_float > 137 and float(user.get("age")) > 2 and float(user.get("age")) <= 4:
+            elif s2_float > 137 and float(user.get("age")) > 2 \
+                    and float(user.get("age")) <= 4:
                 user["tach"] = True
-            elif s2_float > 133 and float(user.get("age")) > 4 and float(user.get("age")) <= 7:
+            elif s2_float > 133 and float(user.get("age")) > 4 \
+                    and float(user.get("age")) <= 7:
                 user["tach"] = True
-            elif s2_float > 130 and float(user.get("age")) > 7 and float(user.get("age")) <= 11:
+            elif s2_float > 130 and float(user.get("age")) > 7 \
+                    and float(user.get("age")) <= 11:
                 user["tach"] = True
-            elif s2_float > 119 and float(user.get("age")) > 11 and float(user.get("age")) <= 15:
+            elif s2_float > 119 and float(user.get("age")) > 11 \
+                    and float(user.get("age")) <= 15:
                 user["tach"] = True
             elif s2_float > 100 and float(user.get("age")) > 15:
                 user["tach"] = True
@@ -156,13 +170,13 @@ def add_heart_rate():
             return jsonify(user)
 
         return jsonify({"message": "Error occurred, check your inputs"}), 500
-    except:
-        return jsonify({"message": "Error occurred, check your inputs"}), 500
+    # except:
+        # return jsonify({"message": "Error occurred, check your inputs"}), 500
 
 
 @app.route("/api/heart_rate/interval_average", methods=['POST'])
 def interval_average():
-    ##try:
+    # try:
         r = request.get_json()
         s1 = r.get("patient_id")
         s1_int = int(s1)
@@ -177,7 +191,8 @@ def interval_average():
                 if times[x].date() > date_time_obj.date():
                     index = x
                     break
-                if times[x].date() == date_time_obj.date() and times[x].time() > date_time_obj.time():
+                if times[x].date() == date_time_obj.date() \
+                        and times[x].time() > date_time_obj.time():
                     index = x
                     break
                 index = x
@@ -193,9 +208,8 @@ def interval_average():
                             "Time:": date_time_obj})
 
         return jsonify({"message": "Error occurred, check your inputs"}), 500
-    ##except:
-        ##return jsonify({"message": "Error occurred, check your inputs"}), 500
-
+    # except:
+        # return jsonify({"message": "Error occurred, check your inputs"}), 500
 
 
 if __name__ == "__main__":
