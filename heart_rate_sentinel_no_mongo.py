@@ -1,13 +1,30 @@
 from flask import Flask, jsonify, request
-
 from validate_email import validate_email
 import datetime
 from datetime import datetime
+import smtplib
+from email.mime.text import MIMEText
 
 
 
 app = Flask(__name__)
-users = [0] * 100
+users = [{
+
+}, {
+             "patient_id": "1",
+             "attending_email": "mike@gmail.com",
+             "age": 50,
+             "heart_rate": [60, 100, 102],
+             "timestamps": [datetime.now(), datetime.now(), "2018-11-10 14:59:25.974534"],
+             "tach": True,
+},{
+             "patient_id": "2",
+             "attending_email": "tom@gmail.com",
+             "age": 50,
+             "heart_rate": [60, 100, 99],
+             "timestamps": [datetime.now(), datetime.now(), "2018-11-10 14:59:25.974534"],
+             "tach": False,
+}] * 100
 
 @app.route("/api/status/<patient_id>", methods=["GET"])
 def tachycardic(patient_id):
@@ -25,8 +42,14 @@ def tachycardic(patient_id):
     time = timestamps[len(timestamps)-1]
     if user.get("tach"):
         string = "Patient" + str(id) + " is tachycardic as of " + str(time)
+        #me = "mpostiglione17@gmail.com"
+        #you = str(user.get("attending_email"))
+        #s = smtplib.SMTP("0.0.0.0", 5000)
+        #s.sendmail(me, [you], string)
+        #s.quit()
     else:
         string = "Patient" + str(id) + " is not tachycardic as of " + str(time)
+    print(string)
     return string
 
 
