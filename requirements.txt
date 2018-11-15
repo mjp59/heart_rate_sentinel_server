@@ -1,0 +1,6 @@
+flask
+pytest
+pytest-cov
+pytest-pep8
+datetime
+sendgrid
