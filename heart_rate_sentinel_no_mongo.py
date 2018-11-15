@@ -6,7 +6,6 @@ import os
 from sendgrid.helpers.mail import *
 
 
-
 app = Flask(__name__)
 users = [{
 
