@@ -2,7 +2,9 @@ import pytest
 from heart_rate_sentinel_no_mongo import tachycardic
 from heart_rate_sentinel_no_mongo import heart_rate
 from heart_rate_sentinel_no_mongo import heart_rate_average
-import requests
+from heart_rate_sentinel_no_mongo import new_patient_validation
+from heart_rate_sentinel_no_mongo import new_heart_rate_validation
+from heart_rate_sentinel_no_mongo import internal_average_validation
 
 
 @pytest.mark.parametrize("candidate,expected", [
@@ -41,30 +43,68 @@ def test_heart_rate_average(candidate, expected):
     assert response == expected
 
 
-def test_new_patient():
-    resp = requests.post("http://0.0.0.0:5000/api/new_patient", json={
+@pytest.mark.parametrize("candidate,expected", [
+    ({
         "patient_id": "1",
-        "attending_email": "suyash.kumar@duke.edu",
+        "attending_email": "mpostiglione17@gmail.com",
         "user_age": "50",
-    })
-    assert resp.status_code == 200
+    }, True),
+    ({
+        "patient_id": 2,
+        "user_age": 10,
+    }, False),
+    ({
+        "attending_email": "mpostiglione17@gmail.com",
+        "user_age": "50",
+    }, False),
+    ({
+        "patient_id": 2,
+        "attending_email": "mpostiglione17@gmail.com",
+    }, False),
 
 
-def test_heart_rate_interval_average():
-    resp = requests.post(
-        "http://0.0.0.0:5000/api/heart_rate/interval_average", json={
-                            "patient_id": "1",
-                            "heart_rate_average_since":
-                            "2018-11-10 13:00:36.372339",
-        })
-    print(resp.text)
-    assert resp.status_code == 200
+
+])
+def test_new_patient(candidate, expected):
+    response = new_patient_validation(candidate)
+    assert response == expected
 
 
-def test_add_heart_rate():
-    resp = requests.post("http://0.0.0.0:5000/api/heart_rate", json={
+@pytest.mark.parametrize("candidate,expected", [
+    ({
         "patient_id": "1",
-        "heart_rate": 60,
-    })
-    print(resp.text)
-    assert resp.status_code == 200
+        "heart_rate_average_since": "2018-11-10 13:00:36.372339",
+    }, True),
+    ({
+        "patient_id": "1",
+    }, False),
+    ({
+        "heart_rate_average_since": "2018-11-10 13:00:36.372339",
+    }, False),
+
+
+
+])
+def test_heart_rate_interval_average(candidate, expected):
+    response = internal_average_validation(candidate)
+    assert response == expected
+
+
+@pytest.mark.parametrize("candidate,expected", [
+    ({
+        "patient_id": "1",
+        "heart_rate": 101,
+    }, True),
+    ({
+        "patient_id": "1",
+    }, False),
+    ({
+        "heart_rate": 101,
+    }, False),
+
+
+
+])
+def test_add_heart_rate(candidate, expected):
+    response = new_heart_rate_validation(candidate)
+    assert response == expected

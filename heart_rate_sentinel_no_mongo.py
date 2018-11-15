@@ -1,9 +1,10 @@
 from flask import Flask, jsonify, request
-from validate_email import validate_email
 import datetime
 from datetime import datetime
-import smtplib
-from email.mime.text import MIMEText
+import sendgrid
+import os
+from sendgrid.helpers.mail import *
+
 
 
 app = Flask(__name__)
@@ -102,12 +103,10 @@ def new_patient():
         """
     # try:
     r = request.get_json()
+    check = new_patient_validation(r)
     s1 = r.get("patient_id")
     s2 = r.get("attending_email")
     s3 = r.get("user_age")
-    check1 = validate_email(s2)
-    check2 = isinstance(int(s1), int)
-    check3 = isinstance(float(s3), float)
     u = {
         "patient_id": s1,
         "attending_email": s2,
@@ -116,7 +115,7 @@ def new_patient():
         "timestamps": [],
         "tach": False,
         }
-    if check1 and check2 and check3:
+    if check:
         users[int(s1)] = u
         return jsonify(u)
 
@@ -138,13 +137,12 @@ def add_heart_rate():
            """
     # try:
     r = request.get_json()
+    check = new_heart_rate_validation(r)
     s1 = r.get("patient_id")
     s1_int = int(s1)
     s2 = r.get("heart_rate")
     s2_float = float(s2)
-    check1 = isinstance(s1_int, int)
-    check2 = isinstance(s2_float, float)
-    if check1 & check2:
+    if check:
         user = users[s1_int]
         user_heartrate = user.get("heart_rate")
         user_heartrate.append(s2_float)
@@ -187,6 +185,19 @@ def add_heart_rate():
         elif s2_float > 100 and float(user.get("age")) > 15:
             user["tach"] = True
         users[s1_int] = user
+
+        sg = sendgrid.SendGridAPIClient(apikey=os.
+                                        environ.get('SENDGRID_API_KEY'))
+        from_email = Email("mpostiglione17@gmail.com")
+        to_email = Email(user.get("attending_email"))
+        subject = "ALERT: Tachycardic"
+        content = Content("text/plain", "Patient" + s1 + " is Tachycardic")
+        mail = Mail(from_email, subject, to_email, content)
+        response = sg.client.mail.send.post(request_body=mail.get())
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
+
         return jsonify(user)
 
     return jsonify({"message": "Error occurred, check your inputs"}), 500
@@ -206,12 +217,12 @@ def interval_average():
            """
     # try:
     r = request.get_json()
+    check = internal_average_validation(r)
     s1 = r.get("patient_id")
     s1_int = int(s1)
     s2 = r.get("heart_rate_average_since")
     date_time_obj = datetime.strptime(str(s2), "%Y-%m-%d %H:%M:%S.%f")
-    check1 = isinstance(s1_int, int)
-    if check1:
+    if check:
         user = users[s1_int]
         times = user.get("timestamps")
         index = 0
@@ -238,6 +249,34 @@ def interval_average():
     return jsonify({"message": "Error occurred, check your inputs"}), 500
     # except:
     # return jsonify({"message": "Error occurred, check your inputs"}), 500
+
+
+def new_patient_validation(json1):
+    s1 = json1.get("patient_id")
+    s2 = json1.get("attending_email")
+    s3 = json1.get("user_age")
+
+    if s1 is None or s2 is None or s3 is None:
+        return False
+    return True
+
+
+def new_heart_rate_validation(json1):
+    s1 = json1.get("patient_id")
+    s2 = json1.get("heart_rate")
+
+    if s1 is None or s2 is None:
+        return False
+    return True
+
+
+def internal_average_validation(json1):
+    s1 = json1.get("patient_id")
+    s2 = json1.get("heart_rate_average_since")
+
+    if s1 is None or s2 is None:
+        return False
+    return True
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ import requests
 def main():
     r2 = requests.post("http://0.0.0.0:5000/api/new_patient", json={
         "patient_id": "1",
-        "attending_email": "suyash.kumar@duke.edu",
+        "attending_email": "mpostiglione17@gmail.com",
         "user_age": "50",
     })
     print(r2.text)

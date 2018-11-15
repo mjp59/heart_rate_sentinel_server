@@ -2,6 +2,5 @@ flask
 pytest
 pytest-cov
 pytest-pep8
-requests
-validate_email
 datetime
+sendgrid
