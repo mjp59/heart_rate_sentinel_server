@@ -6,10 +6,10 @@ import datetime
 from datetime import datetime
 
 
-
 app = Flask(__name__)
 
 connect("mongodb://localhost:27017/example")
+
 
 class User(MongoModel):
     patient_id = fields.IntegerField(primary_key=True)
@@ -47,7 +47,8 @@ def heart_rate(patient_id):
 
    parameter: patient id- int, patient who's records we are examining
 
-   return: list gives a list that contains all heart rate measurments for a patient
+   return: list gives a list that contains all heart
+    rate measurments for a patient
     """
     user = User.objects.raw({"_id": patient_id}).first()
     return user.heart_rate
@@ -60,7 +61,8 @@ def heart_rate_average(patient_id):
 
    parameter: patient id- int, patient who's records we are examining
 
-   return: list gives a list that contains all heart rate measurments for a patient
+   return: list gives a list that contains
+   all heart rate measurments for a patient
     """
     user = User.objects.raw({"_id": patient_id}).first()
     rate = user.heart_rate
@@ -70,7 +72,7 @@ def heart_rate_average(patient_id):
 
 @app.route("/api/new_patient", methods=['POST'])
 def new_patient():
-    ##try:
+    # try:
         r = request.get_json()
         s1 = int(r.get("patient_id"))
         s2 = r.get("attending_email")
@@ -78,14 +80,15 @@ def new_patient():
         check1 = validate_email(s2)
         check2 = isinstance(s1, int)
         check3 = isinstance(s3, int)
-        u = User(patient_id=s1, attending_email=s2, age=s3, heart_rate=[], timestamps=[], tach=False)
+        u = User(patient_id=s1, attending_email=s2, age=s3,
+                 heart_rate=[], timestamps=[], tach=False)
         if check1 and check2 and check3:
             u.save()
             return jsonify({"user": u})
 
         return jsonify({"message": "Error occurred, check your inputs"}), 500
-    ##except:
-      ##  return jsonify({"message": "Error occurred, check your inputs"}), 500
+    # except:
+    # return jsonify({"message": "Error occurred, check your inputs"}), 500
 
 
 @app.route("/api/heart_rate", methods=['POST'])
@@ -141,7 +144,6 @@ def interval_average():
         return jsonify({"message": "Error occurred, check your inputs"}), 500
     except:
         return jsonify({"message": "Error occurred, check your inputs"}), 500
-
 
 
 if __name__ == "__main__":
