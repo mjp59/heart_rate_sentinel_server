@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/mjp59/heart_rate_sentinel_server.svg?branch=master)](https://travis-ci.com/mjp59/heart_rate_sentinel_server)
+
 The working server is in the file heart_rate_sentinel_no_mongo.py. This python file contains a working flask server that stores user information in local ram. The patient information is stored in a dictonary structure, that contains fields for:
 
 patient id

@@ -53,7 +53,8 @@ def tachycardic(patient_id):
         # s.sendmail(me, [you], string)
         # s.quit()
         else:
-            string = "Patient" + str(id) + " is not tachycardic as of " + str(time)
+            string = "Patient" + str(id) + " is not " \
+                                           "tachycardic as of " + str(time)
         print(string)
         return string
     else:
@@ -165,41 +166,41 @@ def add_heart_rate():
             if s2_float > 159 and (float(user.get("age"))*365) <= 2:
                 user["tach"] = True
             elif s2_float > 166 and (float(user.get("age"))*365) > 2 \
-                and (float(user.get("age"))*365) <= 6:
+                    and (float(user.get("age"))*365) <= 6:
                 user["tach"] = True
             elif s2_float > 182 and (float(user.get("age"))*365) > 6 \
-                and (float(user.get("age"))*365) <= 21:
+                    and (float(user.get("age"))*365) <= 21:
                 user["tach"] = True
             elif s2_float > 179 and (float(user.get("age"))*365) > 21 \
-                and (float(user.get("age"))*365) <= 62:
+                    and (float(user.get("age"))*365) <= 62:
                 user["tach"] = True
             elif s2_float > 186 and (float(user.get("age"))*365) > 62 \
-                and (float(user.get("age"))*365) <= 155:
+                    and (float(user.get("age"))*365) <= 155:
                 user["tach"] = True
             elif s2_float > 169 and (float(user.get("age"))*365) > 155 \
-                and (float(user.get("age"))*365) <= 341:
+                    and (float(user.get("age"))*365) <= 341:
                 user["tach"] = True
             elif s2_float > 151 and float(user.get("age")) >= 1 \
-                and float(user.get("age")) <= 2:
+                    and float(user.get("age")) <= 2:
                 user["tach"] = True
             elif s2_float > 137 and float(user.get("age")) > 2 \
-                and float(user.get("age")) <= 4:
+                    and float(user.get("age")) <= 4:
                 user["tach"] = True
             elif s2_float > 133 and float(user.get("age")) > 4 \
-                and float(user.get("age")) <= 7:
+                    and float(user.get("age")) <= 7:
                 user["tach"] = True
             elif s2_float > 130 and float(user.get("age")) > 7 \
-                and float(user.get("age")) <= 11:
+                    and float(user.get("age")) <= 11:
                 user["tach"] = True
             elif s2_float > 119 and float(user.get("age")) > 11 \
-                and float(user.get("age")) <= 15:
+                    and float(user.get("age")) <= 15:
                 user["tach"] = True
             elif s2_float > 100 and float(user.get("age")) > 15:
                 user["tach"] = True
             users[s1_int] = user
 
             sg = sendgrid.SendGridAPIClient(apikey=os.
-                                        environ.get('SENDGRID_API_KEY'))
+                                            environ.get('SENDGRID_API_KEY'))
             from_email = Email("mpostiglione17@gmail.com")
             to_email = Email(user.get("attending_email"))
             subject = "ALERT: Tachycardic"
@@ -242,7 +243,7 @@ def interval_average():
                     index = x
                     break
                 if times[x].date() == date_time_obj.date() \
-                    and times[x].time() > date_time_obj.time():
+                        and times[x].time() > date_time_obj.time():
                     index = x
                     break
                 index = x
@@ -255,7 +256,7 @@ def interval_average():
                     sum = sum + heartrates[i]
                     average = sum/(index+1)
             return jsonify({"average": average,
-                        "Time:": date_time_obj})
+                            "Time:": date_time_obj})
 
     return jsonify({"message": "Error occurred, check your inputs"}), 500
     # except:
