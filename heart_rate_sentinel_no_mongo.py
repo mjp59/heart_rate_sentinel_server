@@ -42,19 +42,22 @@ def tachycardic(patient_id):
     patient_id_int = int(patient_id)
     user = users[patient_id_int]
     id = user.get("patient_id")
-    timestamps = user.get("timestamps")
-    time = timestamps[len(timestamps)-1]
-    if user.get("tach"):
-        string = "Patient" + str(id) + " is tachycardic as of " + str(time)
+    if id is not None:
+        timestamps = user.get("timestamps")
+        time = timestamps[len(timestamps)-1]
+        if user.get("tach"):
+            string = "Patient" + str(id) + " is tachycardic as of " + str(time)
         # me = "mpostiglione17@gmail.com"
         # you = str(user.get("attending_email"))
         # s = smtplib.SMTP("0.0.0.0", 5000)
         # s.sendmail(me, [you], string)
         # s.quit()
+        else:
+            string = "Patient" + str(id) + " is not tachycardic as of " + str(time)
+        print(string)
+        return string
     else:
-        string = "Patient" + str(id) + " is not tachycardic as of " + str(time)
-    print(string)
-    return string
+        return "User not in Database, cannot get status"
 
 
 @app.route("/api/heart_rate/<patient_id>", methods=["GET"])
@@ -70,7 +73,11 @@ def heart_rate(patient_id):
         """
     patient_id_int = int(patient_id)
     user = users[patient_id_int]
-    return str(user.get("heart_rate"))
+    id = user.get("patient_id")
+    if id is not None:
+        return str(user.get("heart_rate"))
+    else:
+        return "User not in Database, cannot get heart rates"
 
 
 @app.route("/api/heart_rate/average/<patient_id>", methods=["GET"])
@@ -86,9 +93,13 @@ def heart_rate_average(patient_id):
     """
     patient_id_int = int(patient_id)
     user = users[patient_id_int]
-    rate = user.get("heart_rate")
-    average_rate = sum(rate)/len(rate)
-    return str(average_rate)
+    id = user.get("patient_id")
+    if id is not None:
+        rate = user.get("heart_rate")
+        average_rate = sum(rate)/len(rate)
+        return str(average_rate)
+    else:
+        return "User not in Database, cannot get heart rate average"
 
 
 @app.route("/api/new_patient", methods=['POST'])
@@ -143,61 +154,60 @@ def add_heart_rate():
     s2_float = float(s2)
     if check:
         user = users[s1_int]
-        user_heartrate = user.get("heart_rate")
-        user_heartrate.append(s2_float)
-        user["heart_rate"] = user_heartrate
-        user_timestamps = user.get("timestamps")
-        user_timestamps.append(datetime.now())
-        user["timestamps"] = user_timestamps
-        if s2_float > 159 and (float(user.get("age"))*365) <= 2:
-            user["tach"] = True
-        elif s2_float > 166 and (float(user.get("age"))*365) > 2 \
+        id = user.get("patient_id")
+        if id is not None:
+            user_heartrate = user.get("heart_rate")
+            user_heartrate.append(s2_float)
+            user["heart_rate"] = user_heartrate
+            user_timestamps = user.get("timestamps")
+            user_timestamps.append(datetime.now())
+            user["timestamps"] = user_timestamps
+            if s2_float > 159 and (float(user.get("age"))*365) <= 2:
+                user["tach"] = True
+            elif s2_float > 166 and (float(user.get("age"))*365) > 2 \
                 and (float(user.get("age"))*365) <= 6:
-            user["tach"] = True
-        elif s2_float > 182 and (float(user.get("age"))*365) > 6 \
+                user["tach"] = True
+            elif s2_float > 182 and (float(user.get("age"))*365) > 6 \
                 and (float(user.get("age"))*365) <= 21:
-            user["tach"] = True
-        elif s2_float > 179 and (float(user.get("age"))*365) > 21 \
+                user["tach"] = True
+            elif s2_float > 179 and (float(user.get("age"))*365) > 21 \
                 and (float(user.get("age"))*365) <= 62:
-            user["tach"] = True
-        elif s2_float > 186 and (float(user.get("age"))*365) > 62 \
+                user["tach"] = True
+            elif s2_float > 186 and (float(user.get("age"))*365) > 62 \
                 and (float(user.get("age"))*365) <= 155:
-            user["tach"] = True
-        elif s2_float > 169 and (float(user.get("age"))*365) > 155 \
+                user["tach"] = True
+            elif s2_float > 169 and (float(user.get("age"))*365) > 155 \
                 and (float(user.get("age"))*365) <= 341:
-            user["tach"] = True
-        elif s2_float > 151 and float(user.get("age")) >= 1 \
+                user["tach"] = True
+            elif s2_float > 151 and float(user.get("age")) >= 1 \
                 and float(user.get("age")) <= 2:
-            user["tach"] = True
-        elif s2_float > 137 and float(user.get("age")) > 2 \
+                user["tach"] = True
+            elif s2_float > 137 and float(user.get("age")) > 2 \
                 and float(user.get("age")) <= 4:
-            user["tach"] = True
-        elif s2_float > 133 and float(user.get("age")) > 4 \
+                user["tach"] = True
+            elif s2_float > 133 and float(user.get("age")) > 4 \
                 and float(user.get("age")) <= 7:
-            user["tach"] = True
-        elif s2_float > 130 and float(user.get("age")) > 7 \
+                user["tach"] = True
+            elif s2_float > 130 and float(user.get("age")) > 7 \
                 and float(user.get("age")) <= 11:
-            user["tach"] = True
-        elif s2_float > 119 and float(user.get("age")) > 11 \
+                user["tach"] = True
+            elif s2_float > 119 and float(user.get("age")) > 11 \
                 and float(user.get("age")) <= 15:
-            user["tach"] = True
-        elif s2_float > 100 and float(user.get("age")) > 15:
-            user["tach"] = True
-        users[s1_int] = user
+                user["tach"] = True
+            elif s2_float > 100 and float(user.get("age")) > 15:
+                user["tach"] = True
+            users[s1_int] = user
 
-        sg = sendgrid.SendGridAPIClient(apikey=os.
+            sg = sendgrid.SendGridAPIClient(apikey=os.
                                         environ.get('SENDGRID_API_KEY'))
-        from_email = Email("mpostiglione17@gmail.com")
-        to_email = Email(user.get("attending_email"))
-        subject = "ALERT: Tachycardic"
-        content = Content("text/plain", "Patient" + s1 + " is Tachycardic")
-        mail = Mail(from_email, subject, to_email, content)
-        response = sg.client.mail.send.post(request_body=mail.get())
-        print(response.status_code)
-        print(response.body)
-        print(response.headers)
+            from_email = Email("mpostiglione17@gmail.com")
+            to_email = Email(user.get("attending_email"))
+            subject = "ALERT: Tachycardic"
+            content = Content("text/plain", "Patient" + s1 + " is Tachycardic")
+            mail = Mail(from_email, subject, to_email, content)
+            response = sg.client.mail.send.post(request_body=mail.get())
 
-        return jsonify(user)
+            return jsonify(user)
 
     return jsonify({"message": "Error occurred, check your inputs"}), 500
     # except:
@@ -223,26 +233,28 @@ def interval_average():
     date_time_obj = datetime.strptime(str(s2), "%Y-%m-%d %H:%M:%S.%f")
     if check:
         user = users[s1_int]
-        times = user.get("timestamps")
-        index = 0
-        for x in range(len(times)):
-            if times[x].date() > date_time_obj.date():
-                index = x
-                break
-            if times[x].date() == date_time_obj.date() \
+        id = user.get("patient_id")
+        if id is not None:
+            times = user.get("timestamps")
+            index = 0
+            for x in range(len(times)):
+                if times[x].date() > date_time_obj.date():
+                    index = x
+                    break
+                if times[x].date() == date_time_obj.date() \
                     and times[x].time() > date_time_obj.time():
+                    index = x
+                    break
                 index = x
-                break
-            index = x
-        heartrates = user.get("heart_rate")
-        if index == 0:
-            average = 0
-        else:
-            sum = 0
-            for i in range(index+1):
-                sum = sum + heartrates[i]
-                average = sum/(index+1)
-        return jsonify({"average": average,
+            heartrates = user.get("heart_rate")
+            if index == 0:
+                average = 0
+            else:
+                sum = 0
+                for i in range(index+1):
+                    sum = sum + heartrates[i]
+                    average = sum/(index+1)
+            return jsonify({"average": average,
                         "Time:": date_time_obj})
 
     return jsonify({"message": "Error occurred, check your inputs"}), 500
